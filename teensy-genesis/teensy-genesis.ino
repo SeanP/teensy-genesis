@@ -12,27 +12,27 @@
 #define HAT_CENTER -1
 
 // Pins
-const int DPAD_LEFT_PIN  = 0;
-const int DPAD_RIGHT_PIN = 0;
-const int DPAD_UP_PIN    = 0;
-const int DPAD_DOWN_PIN  = 0;
+const int DPAD_LEFT_PIN  = 15;
+const int DPAD_RIGHT_PIN = 16;
+const int DPAD_UP_PIN    = 13;
+const int DPAD_DOWN_PIN  = 14;
 
-const int START_PIN = 0;
-const int A_PIN     = 0;
-const int B_PIN     = 0;
-const int C_PIN     = 0;
+const int START_PIN = 22;
+const int A_PIN     = 10;
+const int B_PIN     = 9;
+const int C_PIN     = 12;
 
 
 // State storage
-int dpadLeftState = LOW;
-int dpadRightState = LOW;
-int dpadUpState = LOW;
-int dpadDownState = LOW;
+int dpadLeftState  = HIGH;
+int dpadRightState = HIGH;
+int dpadUpState    = HIGH;
+int dpadDownState  = HIGH;
 
-int aState = LOW;
-int bState = LOW;
-int cState = LOW;
-int startState = LOW;
+int aState     = HIGH;
+int bState     = HIGH;
+int cState     = HIGH;
+int startState = HIGH;
 
 // Debounce handling
 // TODO
@@ -104,8 +104,8 @@ void loop() {
       // Do the thing.
     }
 
-    currState = digitalRead(DPAD_RIGHT_PIN);
-    if (currState != dpadRightState) {
+    currState = digitalRead(DPAD_DOWN_PIN);
+    if (currState != dpadDownState) {
       dpadDownState = currState;
       stateChanged = true;
       // Do the thing.
