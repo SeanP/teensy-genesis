@@ -1,15 +1,8 @@
+//#define TEENSY_GENESIS_DEBUG
 
-#define TEENSY_GENESIS_DEBUG
-
-#define HAT_N 0
-#define HAT_NE 45
-#define HAT_E 90
-#define HAT_SE 135
-#define HAT_S 180
-#define HAT_SW 225
-#define HAT_W 270
-#define HAT_NW 315
-#define HAT_CENTER -1
+#define AXIS_MIN 0
+#define AXIS_MID 512
+#define AXIS_MAX 1023
 
 // Pins
 const int DPAD_LEFT_PIN  = 15;
@@ -56,28 +49,20 @@ void setup() {
 }
 
 void setDpadDirection() {
-    if (LOW == dpadUpState) {
-        if (LOW == dpadLeftState) {
-            Joystick.hat(HAT_NW);
-        } else if (LOW == dpadRightState) {
-            Joystick.hat(HAT_NE);
-        } else {
-            Joystick.hat(HAT_N);
-        }
-    } else if (LOW == dpadDownState) {
-        if (LOW == dpadLeftState) {
-            Joystick.hat(HAT_SW);
-        } else if (LOW == dpadRightState) {
-            Joystick.hat(HAT_SE);
-        } else {
-            Joystick.hat(HAT_S);
-        }
-    } else if (LOW == dpadLeftState) {
-        Joystick.hat(HAT_W);
+    if (LOW == dpadLeftState) {
+        Joystick.X(AXIS_MIN);
     } else if (LOW == dpadRightState) {
-        Joystick.hat(HAT_E);
+        Joystick.X(AXIS_MAX);
     } else {
-        Joystick.hat(HAT_CENTER);
+        Joystick.X(AXIS_MID);
+    }
+
+    if (LOW == dpadUpState) {
+        Joystick.Y(AXIS_MIN);
+    } else if (LOW == dpadDownState) {
+        Joystick.Y(AXIS_MAX);
+    } else {
+        Joystick.Y(AXIS_MID);
     }
 }
 
@@ -87,61 +72,53 @@ void loop() {
     if (currState != dpadLeftState) {
       dpadLeftState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(DPAD_RIGHT_PIN);
     if (currState != dpadRightState) {
       dpadRightState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(DPAD_UP_PIN);
     if (currState != dpadUpState) {
       dpadUpState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(DPAD_DOWN_PIN);
     if (currState != dpadDownState) {
       dpadDownState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(START_PIN);
     if (currState != startState) {
       startState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(A_PIN);
     if (currState != aState) {
       aState = currState;
       stateChanged = true;
-      // Do the thing.
     }
 
     currState = digitalRead(B_PIN);
     if (currState != bState) {
         bState = currState;
         stateChanged = true;
-        // Do the thing.
     }
 
     currState = digitalRead(C_PIN);
     if (currState != cState) {
         cState = currState;
         stateChanged = true;
-        // Do the thing.
     }
 
     if (stateChanged) {
 #ifdef TEENSY_GENESIS_DEBUG
-        Serial.println("Buttons: \n");
+        Serial.println("Buttons:");
         Serial.print("\tDPAD_UP: ");
         Serial.println(dpadUpState, DEC);
         Serial.print("\tDPAD_DOWN: ");
@@ -161,6 +138,8 @@ void loop() {
 #endif
 
         setDpadDirection();
+        
+        // USB expects pressed=1, but for us pressed=0. XOR to normalize.
         Joystick.button(1, aState ^ 1);
         Joystick.button(2, bState ^ 1);
         Joystick.button(3, cState ^ 1);
